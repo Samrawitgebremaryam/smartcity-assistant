@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 from pathlib import Path
 from typing import Any
 
@@ -36,9 +35,21 @@ CORE_SERVICE_KEYWORDS = {
     "registrations": ["birth", "marriage", "death", "residence", "id", "passport", "license", "permit"],
     "utilities": ["electricity", "water", "bill", "payment", "meter"],
     "telecom": ["ethiotelecom", "phone", "sim", "mobile", "ussd"],
-    "transport": ["bus", "route", "taxi", "traffic", "road", "parking"],
+    "transport": ["bus", "route", "taxi", "traffic", "road", "parking", "metro", "rail"],
     "business": ["business", "license", "trade", "permit", "tax", "tin"],
     "emergency": ["hospital", "police", "fire", "ambulance", "emergency", "health"],
+    "smart_government": ["digital", "government", "city", "woreda", "kebele"],
+    "economy": ["business", "economy", "small enterprise", "sme", "market"],
+    "environment": ["environment", "waste", "recycling", "green", "park", "air quality", "pollution"],
+    "living": ["housing", "apartment", "rent", "park", "community", "property"],
+    "mobility": ["transport", "taxi", "bus", "metro", "ride", "traffic"],
+    "people": ["education", "school", "social", "service", "support"],
+    "tax_and_revenue": ["tax", "revenue", "property tax", "withholding", "vat", "income tax"],
+    "id_renewal": ["id", "passport", "driver", "license", "renewal", "national"],
+    "education": ["school", "university", "college", "training", "tvet", "education"],
+    "waste_environment": ["waste", "garbage", "collection", "recycling", "pollution", "tree"],
+    "housing_property": ["housing", "rent", "property", "apartment", "lease", "building"],
+    "tourism_events": ["tourism", "hotel", "event", "festival", "cultural"],
 }
 
 

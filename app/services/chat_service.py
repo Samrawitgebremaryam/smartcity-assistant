@@ -145,6 +145,7 @@ class ChatService:
                 return
 
         # Normal path - use backend RAG pipeline
+        retrieved = self.pipeline.retrieval_service.search(
             cleaned_question,
             language,
             self.settings.retrieval_top_k

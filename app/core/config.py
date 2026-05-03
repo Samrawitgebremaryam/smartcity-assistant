@@ -44,10 +44,10 @@ class Settings(BaseSettings):
     retrieval_top_k: int = 5
     chunk_size: int = 800
     chunk_overlap: int = 100
-    llm_provider: str = "mock"
-    embedding_provider: str = "mock"
+    llm_provider: str = "gemini"
+    embedding_provider: str = "gemini"
     openai_model: str = "gpt-4.1-mini"
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-2.0-flash"
     bootstrap_dataset_glob: str = "ethiopia_smartcity_dataset*.json"
     enable_dataset_bootstrap: bool = True
     fallback_search_base_url: str = "https://www.google.com/search"
