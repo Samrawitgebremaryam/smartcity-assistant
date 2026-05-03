@@ -18,6 +18,7 @@ from app.db.session import SessionLocal
 from app.db.session import engine
 from app.integrations.qdrant_client import get_qdrant_client
 from app.services.dataset_service import DatasetImportService
+from app.services.health_check_service import load_dataset_from_disk
 
 
 configure_logging()
@@ -84,9 +85,16 @@ async def lifespan(app: FastAPI):
         logger.exception("Failed to bootstrap dataset from %s", dataset_path)
     finally:
         db.close()
-    
+
+    # Also load dataset into memory for local fallback search
+    try:
+        load_dataset_from_disk()
+        logger.info("Loaded dataset into memory for local fallback search")
+    except Exception as e:
+        logger.warning("Failed to load dataset for local fallback: %s", e)
+
     yield
-    
+
     logger.info("Shutting down application: %s", settings.project_name)
 
 

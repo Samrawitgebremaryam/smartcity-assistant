@@ -1,4 +1,5 @@
 import time
+
 from app.rag.citations import build_sources
 from app.rag.context_builder import build_context
 from app.rag.fallbacks import (
@@ -28,6 +29,10 @@ from app.rag.generation import get_generation_service
 from app.rag.pipeline import RAGPipeline
 from app.rag.retrieval import RetrievalService
 from app.schemas.chat import ChatResponse
+from app.services.health_check_service import (
+    check_backend_health,
+    get_local_search_results,
+)
 
 
 class ChatService:
@@ -92,7 +97,54 @@ class ChatService:
             }
             return
 
-        retrieved = self.pipeline.retrieval_service.search(
+        # Check backend availability and use fallback if unavailable
+        backend_ok = check_backend_health()
+        if not backend_ok:
+            # Try local fallback search
+            local_results, fallback_msg = get_local_search_results(cleaned_question)
+            if local_results:
+                context = build_context([(doc, doc.get("content", "")) for doc in local_results])
+                sources = [SourceItem(title=doc.get("title", ""), url=doc.get("url", ""), content=doc.get("content", "")) for doc in local_results]
+
+                gen_service = self.pipeline.generation_service
+                full_answer = ""
+
+                async for token in gen_service.generate_streaming(cleaned_question, context):
+                    full_answer += token
+                    yield {"token": token}
+
+                full_answer = append_citations(full_answer, sources)
+                elapsed_ms = (time.perf_counter() - started) * 1000
+
+                query_log = self.query_logs.create(
+                    QueryLog(
+                        question=cleaned_question,
+                        answer=full_answer,
+                        language=language,
+                        latency_ms=elapsed_ms,
+                        confidence=0.5,
+                    )
+                )
+                yield {
+                    "answer": full_answer,
+                    "query_id": query_log.id,
+                    "sources": [source.model_dump() for source in sources],
+                    "search_suggestions": [],
+                    "suggested_questions": [],
+                    "response_kind": "fallback",
+                }
+                return
+            else:
+                yield {
+                    "answer": fallback_msg or OUT_OF_SCOPE_ANSWER,
+                    "sources": [],
+                    "search_suggestions": [],
+                    "suggested_questions": build_suggested_questions(cleaned_question, "out_of_scope"),
+                    "response_kind": "out_of_scope",
+                }
+                return
+
+        # Normal path - use backend RAG pipeline
             cleaned_question,
             language,
             self.settings.retrieval_top_k
