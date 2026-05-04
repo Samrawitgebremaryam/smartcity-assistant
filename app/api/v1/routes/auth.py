@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import re
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -68,13 +69,14 @@ def get_current_user(
     try:
         token = credentials.credentials
         payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
-        user_id: str = payload.get("sub")
+        user_id_raw: str = payload.get("sub")
+        user_id = uuid.UUID(user_id_raw) if user_id_raw else None
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials"
             )
-    except JWTError:
+    except (JWTError, ValueError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"

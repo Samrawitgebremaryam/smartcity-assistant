@@ -43,9 +43,10 @@ class DatasetImportService:
         language: str = "en",
         force: bool = False,
     ) -> list[str]:
-        records = json.loads(dataset_path.read_text(encoding="utf-8"))
+        raw = json.loads(dataset_path.read_text(encoding="utf-8"))
+        records = raw.get("documents", raw) if isinstance(raw, dict) else raw
         if not isinstance(records, list):
-            raise ValueError("Dataset JSON must contain a list of records.")
+            raise ValueError("Dataset JSON must contain a list of records or a 'documents' list.")
 
         imported_ids: list[str] = []
         for record in records:
@@ -61,10 +62,10 @@ class DatasetImportService:
             document = self.document_service.save_text_document(
                 title=title,
                 content=normalized_content,
-                category=default_category,
-                service_area=default_service_area,
-                source=default_source,
-                language=language,
+                category=str(record.get("category") or default_category).strip() or default_category,
+                service_area=str(record.get("service_area") or default_service_area).strip() or default_service_area,
+                source=str(record.get("source_url") or record.get("source") or default_source).strip() or default_source,
+                language=str(record.get("language") or language).strip() or language,
                 document_type="dataset_record",
             )
             self.ingestion_service.ingest_document(document.id, force=force)

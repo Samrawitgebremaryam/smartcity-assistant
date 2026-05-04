@@ -5,7 +5,6 @@ from app.rag.fallbacks import (
     MISSING_DATA_FALLBACK,
     OUT_OF_SCOPE_ANSWER,
     UNCLEAR_ANSWER,
-    append_citations,
     build_search_suggestions,
     build_suggested_questions,
     is_greeting,
@@ -83,7 +82,7 @@ class RAGPipeline:
         context = build_context(context_items)
         answer, confidence = self.generation_service.generate_answer(cleaned_question, context)
         sources = build_sources(context_items)
-        normalized_answer = append_citations(normalize_answer(answer), sources)
+        normalized_answer = normalize_answer(answer)
         if is_insufficient_answer(normalized_answer, sources):
             return ChatResponse(
                 answer=MISSING_DATA_FALLBACK,

@@ -10,6 +10,7 @@ COPY alembic.ini ./
 COPY alembic ./alembic
 COPY app ./app
 COPY tests ./tests
+COPY ethiopia_smartcity_dataset.json ./
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -e .[ai] && \

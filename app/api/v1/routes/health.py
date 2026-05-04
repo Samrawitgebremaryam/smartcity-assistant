@@ -57,7 +57,7 @@ def health_details(db: Session = Depends(get_db)):
         from app.rag.embeddings import get_embedding_service
         start = time.time()
         emb = get_embedding_service()
-        test_emb = emb.embed_text("health check")
+        _ = emb.embed_text("health check")
         status["services"]["embeddings"] = {"status": "healthy", "latency_ms": round((time.time() - start) * 1000, 2)}
     except Exception as e:
         status["services"]["embeddings"] = {"status": "unavailable", "error": str(e)}
@@ -66,7 +66,7 @@ def health_details(db: Session = Depends(get_db)):
         from app.rag.generation import get_generation_service
         start = time.time()
         gen = get_generation_service()
-        answer, _ = gen.generate_answer("test", "This is a test context for health check.")
+        answer, _ = gen.generate_answer("test health", "This is a test context for health check.")
         status["services"]["generation"] = {"status": "healthy", "latency_ms": round((time.time() - start) * 1000, 2), "response_length": len(answer)}
     except Exception as e:
         status["services"]["generation"] = {"status": "unavailable", "error": str(e)}

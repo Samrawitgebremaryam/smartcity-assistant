@@ -41,7 +41,8 @@ IN_SCOPE_KEYWORDS = {
     "addis", "ababa", "city", "service", "services", "municipal", "registration", "certificate", "birth",
     "marriage", "electricity", "water", "bill", "payment", "telebirr", "cbe", "banking", "bus", "route",
     "transport", "ethiotelecom", "telecom", "ussd", "volte", "business", "licence", "license", "hospital",
-    "emergency", "contact", "administration", "civil", "resident", "residency", "permit", "office",
+    "emergency", "contact", "administration", "civil", "resident", "residency", "residence", "identity",
+    "passport", "immigration", "permit", "office",
 }
 
 
@@ -50,6 +51,12 @@ def normalize_answer(answer: str | None) -> str:
         return INSUFFICIENT_DATA_ANSWER
 
     normalized = answer.strip()
+    if not normalized:
+        return INSUFFICIENT_DATA_ANSWER
+    normalized = "\n".join(
+        line for line in normalized.splitlines()
+        if not line.strip().lower().startswith(("source:", "sources:"))
+    ).strip()
     if not normalized:
         return INSUFFICIENT_DATA_ANSWER
     return normalized

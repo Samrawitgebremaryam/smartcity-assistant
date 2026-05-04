@@ -28,9 +28,10 @@ htmlcov/
 # Linting
 .ruff_cache/
 
-# Environment
+# Environment - ADD BOTH FILES TO PROTECT API KEYS
 .env
 .env.local
+.env.production
 *.log
 
 # Data

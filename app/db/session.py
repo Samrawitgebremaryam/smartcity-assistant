@@ -7,12 +7,16 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
-engine = create_engine(
-    settings.database_url,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
-    pool_recycle=3600,
-    poolclass=NullPool if settings.environment == "testing" else None,
-)
+use_null_pool = settings.environment.lower() in ["testing", "test"]
+
+if use_null_pool:
+    engine = create_engine(settings.database_url, poolclass=NullPool)
+else:
+    engine = create_engine(
+        settings.database_url,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+        pool_recycle=3600,
+    )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

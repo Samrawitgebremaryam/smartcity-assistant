@@ -195,12 +195,3 @@ Return Answer
 - Integration tests for API endpoints
 - End-to-end tests for RAG pipeline
 
-## Future Enhancements
-
-1. **Real Embeddings**: Upgrade to sentence-transformers
-2. **Authentication**: Add JWT auth
-3. **Rate Limiting**: Add request limits
-4. **Monitoring**: Add Prometheus metrics
-5. **Caching**: Add response caching in Redis
-6. **Multi-language**: Support more languages
-7. **File Types**: Support PDF, DOCX parsing
