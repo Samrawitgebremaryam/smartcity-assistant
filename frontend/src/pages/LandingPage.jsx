@@ -35,7 +35,7 @@ export default function LandingPage() {
       <section className="relative flex min-h-[100vh] flex-col justify-start overflow-hidden px-6 pt-14">
         <div className="relative z-10 mx-auto w-full max-w-[1560px]">
           <div className="grid items-center justify-center gap-12 pt-16 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-2 lg:gap-8 lg:pt-0">
-            <div className="max-w-[560px] mx-auto text-center">
+            <div className="max-w-[560px] ml-auto text-left px-8">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-1.5 text-xs font-medium text-zinc-300">
                 <Sparkles className="h-3 w-3" />
                 Addis Ababa Smart-City Assistant

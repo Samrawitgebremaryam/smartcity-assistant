@@ -1,13 +1,16 @@
 function normalizeContent(content) {
   return content
     .replace(/\r\n/g, '\n')
-    .replace(/\u2022/g, '- ')
-    .replace(/\s+\*\s+/g, '\n- ')
-    .replace(/:\s+- /g, ':\n- ')
+    .replace(/\u2022/g, '•')
+    .replace(/\s*•\s*/g, '\n• ')
     .replace(/(\d+\.)\s+\*\*(.*?)\*\*/g, '\n$1 $2')
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/([^.:\n])\s+(\d+\.)\s+/g, '$1\n$2 ')
-    .replace(/([a-z])\s+(These|This|They|It|For post-paid|Since May|Since|You can also)\b/g, '$1. $2')
+    .replace(/([a-z]):\s*(-)\s+/g, '$1:\n- ')
+    .replace(/Key points:/gi, '\nKey points:')
+    .replace(/Example:/gi, '\nExample:')
+    .replace(/Steps:/gi, '\nSteps:')
+    .replace(/Eligibility:/gi, '\nEligibility:')
+    .replace(/Notes:/gi, '\nNotes:')
+    .replace(/([a-z])\s+(Key points|Example|Steps|Eligibility|Notes|This|These|They|For more|Also|You can|TeleBirr|Post-paid|Pre-paid|Renewal|Fees|Processing time|Route|Network size|Passeng|Bus number|Origin|Destination|Distance)\b/gi, '$1\n$2')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
@@ -34,6 +37,12 @@ function parseBlocks(content) {
       continue
     }
 
+    if (/^(key points|example|steps|eligibility|notes|renewal|processing time|fees|network size|passeng|route|bus number|origin|destination|distance|eligibility:|payment options|digital payment|water bill|tax payment|business licence|business license):/i.test(line)) {
+      flushList()
+      blocks.push({ type: 'heading', text: line.replace(/:$/, '').trim() })
+      continue
+    }
+
     if (/^\d+\.\s/.test(line)) {
       const item = line.replace(/^\d+\.\s/, '').trim()
       if (!currentList || currentList.type !== 'ordered') {
@@ -44,8 +53,8 @@ function parseBlocks(content) {
       continue
     }
 
-    if (line.startsWith('- ')) {
-      const item = line.slice(2).trim()
+    if (line.startsWith('- ') || line.startsWith('• ')) {
+      const item = line.replace(/^[-•]\s*/, '').trim()
       if (!currentList || currentList.type !== 'unordered') {
         flushList()
         currentList = { type: 'unordered', items: [] }
@@ -72,11 +81,11 @@ export default function MarkdownContent({ content }) {
   const blocks = parseBlocks(content)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {blocks.map((block, index) => {
         if (block.type === 'heading') {
           return (
-            <h3 key={index} className="pt-2 text-[1.02rem] font-semibold text-white">
+            <h3 key={index} className="mt-6 first:mt-0 text-[1.05rem] font-bold text-white">
               {block.text}
             </h3>
           )
@@ -84,7 +93,7 @@ export default function MarkdownContent({ content }) {
 
         if (block.type === 'ordered') {
           return (
-            <ol key={index} className="ml-6 list-decimal space-y-2 text-[15px] leading-7 text-zinc-200 marker:text-zinc-500">
+            <ol key={index} className="ml-5 list-decimal space-y-2 text-[15px] leading-7 text-zinc-200 marker:text-zinc-400">
               {block.items.map((item, itemIndex) => (
                 <li key={itemIndex}>{item}</li>
               ))}
@@ -94,7 +103,7 @@ export default function MarkdownContent({ content }) {
 
         if (block.type === 'unordered') {
           return (
-            <ul key={index} className="ml-6 list-disc space-y-2 text-[15px] leading-7 text-zinc-200 marker:text-zinc-500">
+            <ul key={index} className="ml-5 list-disc space-y-2 text-[15px] leading-7 text-zinc-200 marker:text-zinc-400">
               {block.items.map((item, itemIndex) => (
                 <li key={itemIndex}>{item}</li>
               ))}

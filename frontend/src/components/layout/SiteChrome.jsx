@@ -59,7 +59,7 @@ export function Header() {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all ${scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10' : ''}`}>
-      <div className="mx-auto flex h-14 max-w-[1560px] items-center justify-between px-6 lg:px-12">
+      <div className="mx-auto flex h-14 max-w-[1560px] items-center justify-between px-6 lg:px-10">
         <Brand compact />
         <nav className="hidden items-center gap-6 md:flex">
           <a href="#features" className="text-sm font-medium text-zinc-500 transition hover:text-white">Product</a>

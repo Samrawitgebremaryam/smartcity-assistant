@@ -276,6 +276,7 @@ export default function ChatPage() {
         searchSuggestions: responseMeta.searchSuggestions,
         suggestedQuestions: responseMeta.suggestedQuestions,
         responseKind: responseMeta.responseKind,
+        isOfflineAnswer: responseMeta.responseKind === 'fallback' || responseMeta.responseKind === 'missing_data',
       }
 
       setMessages((prev) => {
@@ -521,7 +522,7 @@ export default function ChatPage() {
                 <p className="mt-3 text-sm text-zinc-500">Ask about city services, permits, utilities, transport, or public information.</p>
               </div>
               <div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-                {['How do I register my business?', 'Pay electricity bill', 'Report broken streetlight', 'Bus routes to Mercato'].map((prompt) => (
+                {['How do I register a birth certificate?', 'How do I pay my electricity bill?', 'What are Anbessa bus routes?', 'How do I apply for a business licence?', 'What emergency numbers should I call?', 'How do I pay my water bill?'].map((prompt) => (
                   <button key={prompt} onClick={(e) => sendMessage(e, prompt)} className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4 text-left text-sm text-zinc-200 transition hover:bg-white/[0.06]">
                     {prompt}
                   </button>
@@ -548,7 +549,7 @@ export default function ChatPage() {
                           <p className="max-w-3xl text-[15px] leading-8 text-red-400">{message.content}</p>
                         ) : (
                           <>
-                            <div className="max-w-3xl">
+                            <div className="max-w-3xl rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-5 shadow backdrop-blur">
                               <MarkdownContent content={message.content} />
                             </div>
                             <div className="mt-4 flex items-center gap-1 text-zinc-400">
@@ -594,10 +595,17 @@ export default function ChatPage() {
                             {message.sources?.length > 0 && (
                               <div className="mt-4 flex flex-wrap gap-2">
                                 {message.sources.map((source, i) => (
-                                  <span key={i} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-zinc-300">
+                                  <span key={i} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-zinc-300">
                                     {source.title}
                                   </span>
                                 ))}
+                              </div>
+                            )}
+                            {message.isOfflineAnswer && (
+                              <div className="mt-3 flex items-center gap-2">
+                                <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-2.5 py-0.5 text-xs text-orange-400">
+                                  Offline dataset answer
+                                </span>
                               </div>
                             )}
                             {message.suggestedQuestions?.length > 0 && (
